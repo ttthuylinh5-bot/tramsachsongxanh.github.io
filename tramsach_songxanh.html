@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trạm Sách Sóng Xanh 🌊🐳</title>
+    <style>
+        :root {
+            --bg-ocean: #f0f8ff;
+            --primary-blue: #0077b6;
+            --secondary-blue: #0096c7;
+            --light-blue: #90e0ef;
+            --soft-box: #e2eafc;
+            --dark-text: #03045e;
+            --accent-orange: #f4a261;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-ocean);
+            color: var(--dark-text);
+            padding-bottom: 60px;
+            min-height: 100vh;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-blue));
+            color: var(--white);
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* KHU VỰC CÁC HỘP THỂ LOẠI (DRAG & DROP ZONE) */
+        .boxes-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid var(--light-blue);
+            padding-bottom: 5px;
+        }
+
+        .boxes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .drop-box {
+            background-color: var(--soft-box);
+            border: 3px dashed var(--secondary-blue);
+            border-radius: 20px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .drop-box:hover, .drop-box.dragover {
+            background-color: var(--light-blue);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        .box-icon {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .drop-box h3 {
+            font-size: 1.1rem;
+            color: var(--dark-text);
+            margin-bottom: 8px;
+        }
+
+        .drop-box p {
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        /* Ẩn input file mặc định */
+        .box-file-input {
+            display: none;
+        }
+
+        /* THÔNG TIN NGƯỜI THU ÂM */
+        .speaker-info {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .speaker-info label {
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+
+        .speaker-info input {
+            padding: 10px 15px;
+            border: 2px solid var(--light-blue);
+            border-radius: 10px;
+            outline: none;
+            font-size: 0.95rem;
+            min-width: 250px;
+        }
+
+        /* KHO SÁCH NÓI / DANH SÁCH PHÁT */
+        .playlist-section {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.04);
+        }
+
+        .shelf {
+            margin-bottom: 30px;
+        }
+
+        .shelf:last-child {
+            margin-bottom: 0;
+        }
+
+        .shelf-title {
+            font-size: 1.2rem;
+            color: var(--secondary-blue);
+            margin-bottom: 15px;
+            padding-left: 8px;
+            border-left: 4px solid var(--accent-orange);
+        }
+
+        .audio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .audio-card {
+            background: var(--bg-ocean);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 1px solid var(--soft-box);
+        }
+
+        .audio-info h4 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+            color: var(--dark-text);
+        }
+
+        .audio-info p {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        audio {
+            width: 100%;
+            height: 35px;
+        }
+
+        .no-data {
+            font-size: 0.9rem;
+            color: #888;
+            font-style: italic;
+            padding-left: 8px;
+        }
+
+        /* HIỆU ỨNG SÓNG BIỂN TRANG TRÍ Ở CUỐI TRANG */
+        .ocean-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: var(--primary-blue);
+            box-shadow: 0 -4px 10px rgba(0,119,182,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Trạm Sách Sóng Xanh 🌊</h1>
+        <p>Thả tệp âm thanh vào từng Hộp Thể Loại để phát ngay lên mạng nội bộ (Không cần Internet)</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- KHU VỰC ĐIỀN TÊN NGƯỜI THU ÂM -->
+        <div class="speaker-info">
+            <label for="speakerName">🎙️ Người thu âm / Đọc sách:</label>
+            <input type="text" id="speakerName" placeholder="Nhập tên của bạn hoặc đơn vị..." value="Chiến sĩ Đảo">
+        </div>
+
+        <!-- KHU VỰC CÁC HỘP THẢ FILE -->
+        <section class="boxes-section">
+            <h2 class="section-title">📦 Chọn hoặc Kéo thả file âm thanh vào Hộp:</h2>
+            
+            <div class="boxes-grid">
+                <!-- Hộp Cổ Tích -->
+                <div class="drop-box" data-category="co-tich" onclick="triggerInput('file-co-tich')">
+                    <span class="box-icon">🧚</span>
+                    <h3>Hộp Truyện Cổ Tích</h3>
+                    <p>Thả file truyện thiếu nhi, cổ tích vào đây</p>
+                    <input type="file" id="file-co-tich" class="box-file-input" accept="audio/*" onchange="handleFileSelect(this, 'co-tich')">
+                </div>
+
+                <!-- Hộp Tiểu Thuyết -->
+                <div class="drop-box" data-category="tieu-thuyet" onclick="triggerInput('file-tieu-thuyet')">
+                    <span class="box-icon">📖</span>
+                    <h3>Hộp Tiểu Thuyết</h3>
+                    <p>Thả tệp văn học, truyện dài, tiểu thuyết</p>
+                    <input type="file" id="file-tieu-thuyet" class="box-file-input" accept="audio/*" onchange="handleFileSelect(this, 'tieu-thuyet')">
+                </div>
+
+                <!-- Hộp Trồng Trọt -->
+                <div class="drop-box" data-category="trong-trot" onclick="triggerInput('file-trong-trot')">
+                    <span class="box-icon">🌱</span>
+                    <h3>Hộp Trồng Trọt</h3>
+                    <p>Thả file hướng dẫn tăng gia, trồng trọt, chăn nuôi</p>
+                    <input type="file" id="file-trong-trot" class="box-file-input" accept="audio/*" onchange="handleFileSelect(this, 'trong-trot')">
+                </div>
+
+                <!-- Hộp Sơ Cứu -->
+                <div class="drop-box" data-category="so-cuu" onclick="triggerInput('file-so-cuu')">
+                    <span class="box-icon">⛑️</span>
+                    <h3>Hộp Sơ Cứu Sinh Tồn</h3>
+                    <p>Thả tệp hướng dẫn y tế, cấp cứu khẩn cấp</p>
+                    <input type="file" id="file-so-cuu" class="box-file-input" accept="audio/*" onchange="handleFileSelect(this, 'so-cuu')">
+                </div>
+            </div>
+        </section>
+
+        <!-- KHO SÁCH HIỂN THỊ DANH SÁCH NGHE ĐƯỢC -->
+        <section class="playlist-section">
+            <h2 class="section-title">🎵 Thư Viện Sách Nói Trực Tuyến Nội Bộ</h2>
+
+            <!-- Kệ truyện cổ tích -->
+            <div class="shelf">
+                <h3 class="shelf-title">Kệ Truyện Cổ Tích</h3>
+                <div class="audio-grid" id="shelf-co-tich">
+                    <p class="no-data">Chưa có sách nào trong hộp này. Hãy kéo thả file để kích hoạt!</p>
+                </div>
+            </div>
+
+            <!-- Kệ tiểu thuyết -->
+            <div class="shelf">
+                <h3 class="shelf-title">Kệ Tiểu Thuyết Văn Học</h3>
+                <div class="audio-grid" id="shelf-tieu-thuyet">
+                    <p class="no-data">Chưa có sách nào trong hộp này. Hãy kéo thả file để kích hoạt!</p>
+                </div>
+            </div>
+
+            <!-- Kệ trồng trọt -->
+            <div class="shelf">
+                <h3 class="shelf-title">Kệ Kỹ Năng Trồng Trọt & Tăng Gia</h3>
+                <div class="audio-grid" id="shelf-trong-trot">
+                    <p class="no-data">Chưa có sách nào trong hộp này. Hãy kéo thả file để kích hoạt!</p>
+                </div>
+            </div>
+
+            <!-- Kệ sơ cứu -->
+            <div class="shelf">
+                <h3 class="shelf-title">Kệ Sơ Cứu & Khẩn Cấp</h3>
+                <div class="audio-grid" id="shelf-so-cuu">
+                    <p class="no-data">Chưa có sách nào trong hộp này. Hãy kéo thả file để kích hoạt!</p>
+                </div>
+            </div>
+
+        </section>
+    </div>
+
+    <div class="ocean-footer"></div>
+
+    <script>
+        // Kích hoạt click vào input file khi click vào hộp tương ứng
+        function triggerInput(inputId) {
+            document.getElementById(inputId).click();
+        }
+
+        // Xử lý khi người dùng chọn file qua nút bấm/click hộp
+        function handleFileSelect(input, category) {
+            if (input.files && input.files[0]) {
+                addAudioCard(input.files[0], category);
+                input.value = ''; // Reset để có thể chọn lại cùng 1 file nếu muốn
+            }
+        }
+
+        // Tạo và thêm thẻ nghe nhạc vào kệ tương ứng
+        function addAudioCard(file, category) {
+            const shelf = document.getElementById(`shelf-${category}`);
+            const speakerName = document.getElementById('speakerName').value.trim() || "Người dùng ẩn danh";
+            
+            // Xóa dòng "Chưa có sách nào..." nếu là file đầu tiên
+            const noDataText = shelf.querySelector('.no-data');
+            if (noDataText) {
+                shelf.removeChild(noDataText);
+            }
+
+            // Tạo URL tạm thời để trình duyệt đọc trực tiếp file vừa tải lên
+            const audioUrl = URL.createObjectURL(file);
+
+            // Cắt bỏ đuôi file mở rộng để làm tên sách cho đẹp
+            const title = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+
+            // Tạo cấu trúc thẻ audio card
+            const card = document.createElement('div');
+            card.className = 'audio-card';
+            card.innerHTML = `
+                <div class="audio-info">
+                    <h4>${title}</h4>
+                    <p>🎙️ Giọng đọc: <b>${speakerName}</b></p>
+                </div>
+                <audio controls src="${audioUrl}"></audio>
+            `;
+
+            // Đẩy vào đầu danh sách của kệ đó
+            shelf.insertBefore(card, shelf.firstChild);
+        }
+
+        // --- THIẾT LẬP TÍNH NĂNG KÉO THẢ (DRAG & DROP) CHO CÁC HỘP ---
+        const dropBoxes = document.querySelectorAll('.drop-box');
+
+        dropBoxes.forEach(box => {
+            // Khi kéo file vào vùng của hộp
+            box.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                box.classList.add('dragover');
+            });
+
+            // Khi kéo file ra khỏi vùng của hộp
+            box.addEventListener('dragleave', () => {
+                box.classList.remove('dragover');
+            });
+
+            // Khi thả file vào hộp
+            box.addEventListener('drop', (e) => {
+                e.preventDefault();
+                box.classList.remove('dragover');
+
+                const category = box.getAttribute('data-category');
+                const files = e.dataTransfer.files;
+
+                if (files.length > 0) {
+                    // Kiểm tra xem file có phải là định dạng âm thanh không
+                    if (files[0].type.startsWith('audio/')) {
+                        addAudioCard(files[0], category);
+                    } else {
+                        alert('Vui lòng chỉ thả các tệp tin âm thanh (mp3, wav, m4a, ogg...)');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
